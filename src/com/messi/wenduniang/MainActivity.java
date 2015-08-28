@@ -1,146 +1,212 @@
 package com.messi.wenduniang;
 
-import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.content.ClipboardManager;
 import android.content.Context;
-import android.os.Build;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
+import android.view.View.OnClickListener;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
-public class MainActivity extends ActionBarActivity implements
-		NavigationDrawerFragment.NavigationDrawerCallbacks {
+import com.gc.materialdesign.views.ButtonFloat;
+import com.gc.materialdesign.views.ButtonRectangle;
+import com.iflytek.cloud.RecognizerListener;
+import com.iflytek.cloud.RecognizerResult;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.SpeechRecognizer;
+import com.iflytek.cloud.SpeechUtility;
+import com.lerdian.search.SearchManger;
+import com.messi.wenduniang.util.JsonParser;
+import com.messi.wenduniang.util.LogUtil;
+import com.messi.wenduniang.util.Settings;
+import com.messi.wenduniang.util.ToastUtil;
+import com.messi.wenduniang.util.XFUtil;
 
-	/**
-	 * Fragment managing the behaviors, interactions and presentation of the
-	 * navigation drawer.
-	 */
-	private NavigationDrawerFragment mNavigationDrawerFragment;
+public class MainActivity extends BaseActivity implements OnClickListener {
 
-	/**
-	 * Used to store the last screen title. For use in
-	 * {@link #restoreActionBar()}.
-	 */
-	private CharSequence mTitle;
-
+	private EditText input_et;
+	private ButtonRectangle submit_btn;
+	private ButtonFloat buttonFloat;
+	private FrameLayout clear_btn_layout;
+	private LinearLayout record_layout;
+	private ImageView record_anim_img;
+	private SharedPreferences mSharedPreferences;
+	
+	private SpeechRecognizer recognizer;
+	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.navigation_drawer);
-		mTitle = getTitle();
-
-		// Set up the drawer.
-		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
-				(DrawerLayout) findViewById(R.id.drawer_layout));
+		init();
 	}
-
-	@Override
-	public void onNavigationDrawerItemSelected(int position) {
-		// update the main content by replacing fragments
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		fragmentManager
-				.beginTransaction()
-				.replace(R.id.container,
-						PlaceholderFragment.newInstance(position + 1)).commit();
-	}
-
-	public void onSectionAttached(int number) {
-		switch (number) {
-		case 1:
-			mTitle = getString(R.string.title_section1);
-			break;
-		case 2:
-			mTitle = getString(R.string.title_section2);
-			break;
-		case 3:
-			mTitle = getString(R.string.title_section3);
-			break;
-		}
-	}
-
-	public void restoreActionBar() {
-		ActionBar actionBar = getSupportActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setTitle(mTitle);
+	
+	private void init(){
+		SpeechUtility.createUtility(this, SpeechConstant.APPID + "=" +getString(R.string.app_id));
+		setTitle(getResources().getString(R.string.app_name));
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+		recognizer = SpeechRecognizer.createRecognizer(this, null);
+		mSharedPreferences = Settings.getSharedPreferences(this);
+		submit_btn = (ButtonRectangle) findViewById(R.id.submit_btn);
+		buttonFloat = (ButtonFloat) findViewById(R.id.buttonFloat);
+		input_et = (EditText) findViewById(R.id.input_et);
+		clear_btn_layout = (FrameLayout) findViewById(R.id.clear_btn_layout);
+		record_layout = (LinearLayout) findViewById(R.id.record_layout);
+		record_anim_img = (ImageView) findViewById(R.id.record_anim_img);
+		
+		submit_btn.setOnClickListener(this);
+		buttonFloat.setOnClickListener(this);
+		clear_btn_layout.setOnClickListener(this);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		if (!mNavigationDrawerFragment.isDrawerOpen()) {
-			// Only show items in the action bar relevant to this screen
-			// if the drawer is not showing. Otherwise, let the drawer
-			// decide what to show in the action bar.
-			getMenuInflater().inflate(R.menu.main, menu);
-			restoreActionBar();
-			return true;
-		}
+		getMenuInflater().inflate(R.menu.global, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		if (id == R.id.action_more) {
+			
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
-		private static final String ARG_SECTION_NUMBER = "section_number";
-
-		/**
-		 * Returns a new instance of this fragment for the given section number.
-		 */
-		public static PlaceholderFragment newInstance(int sectionNumber) {
-			PlaceholderFragment fragment = new PlaceholderFragment();
-			Bundle args = new Bundle();
-			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-			fragment.setArguments(args);
-			return fragment;
-		}
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
-					false);
-			return rootView;
-		}
-
-		@Override
-		public void onAttach(Activity activity) {
-			super.onAttach(activity);
-			((MainActivity) activity).onSectionAttached(getArguments().getInt(
-					ARG_SECTION_NUMBER));
+	@Override
+	public void onClick(View v) {
+		if (v.getId() == R.id.submit_btn) {
+			toBaiduActivity();
+		}else if (v.getId() == R.id.clear_btn_layout) {
+			input_et.setText("");
+		}else if (v.getId() == R.id.buttonFloat) {
+			showIatDialog();
 		}
 	}
+	
+	public void showIatDialog() {
+		if(!recognizer.isListening()){
+			record_layout.setVisibility(View.VISIBLE);
+			input_et.setText("");
+			buttonFloat.setDrawableIcon(getResources().getDrawable(R.drawable.ic_stop_white_36dp));
+			XFUtil.showSpeechRecognizer(this,mSharedPreferences,recognizer,recognizerListener);
+		}else{
+			buttonFloat.setDrawableIcon(getResources().getDrawable(R.drawable.ic_mic_white_36dp));
+			finishRecord();
+			recognizer.stopListening();
+			loadding();
+		}
+	}
+	
+	/**
+	 * finish record
+	 */
+	private void finishRecord(){
+		record_layout.setVisibility(View.GONE);
+	}
+	
+	RecognizerListener recognizerListener = new RecognizerListener() {
 
+		@Override
+		public void onBeginOfSpeech() {
+			LogUtil.DefalutLog("onBeginOfSpeech");
+		}
+
+		@Override
+		public void onError(SpeechError err) {
+			LogUtil.DefalutLog("onError:"+err.getErrorDescription());
+			finishRecord();
+			finishLoadding();
+			ToastUtil.diaplayMesShort(MainActivity.this, err.getErrorDescription());
+		}
+
+		@Override
+		public void onEndOfSpeech() {
+			LogUtil.DefalutLog("onEndOfSpeech");
+			loadding();
+			finishRecord();
+		}
+
+		@Override
+		public void onResult(RecognizerResult results, boolean isLast) {
+			LogUtil.DefalutLog("onResult");
+			String text = JsonParser.parseIatResult(results.getResultString());
+			input_et.append(text);
+			input_et.setSelection(input_et.length());
+			if(isLast) {
+				finishRecord();
+				finishLoadding();
+				toBaiduActivity();
+			}
+		}
+
+		@Override
+		public void onEvent(int arg0, int arg1, int arg2, Bundle arg3) {
+		}
+
+		@Override
+		public void onVolumeChanged(int volume, byte[] arg1) {
+			if(volume < 4){
+				record_anim_img.setBackgroundResource(R.drawable.speak_voice_1);
+			}else if(volume < 8){
+				record_anim_img.setBackgroundResource(R.drawable.speak_voice_2);
+			}else if(volume < 12){
+				record_anim_img.setBackgroundResource(R.drawable.speak_voice_3);
+			}else if(volume < 16){
+				record_anim_img.setBackgroundResource(R.drawable.speak_voice_4);
+			}else if(volume < 20){
+				record_anim_img.setBackgroundResource(R.drawable.speak_voice_5);
+			}else if(volume < 24){
+				record_anim_img.setBackgroundResource(R.drawable.speak_voice_6);
+			}else if(volume < 31){
+				record_anim_img.setBackgroundResource(R.drawable.speak_voice_7);
+			}
+		}
+
+	};
+	
+	private void toBaiduActivity(){
+		String data = input_et.getText().toString().replaceAll("[\\p{P}]", "");
+		if(TextUtils.isEmpty(data)){
+			Intent intent = new Intent(this,com.lerdian.search.SearchResult.class);
+			startActivity(intent);
+		}else{
+			ClipboardManager cm = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
+			cm.setText(data);//string为你要传入的值
+			SearchManger.openDetail(this);
+		}
+	}
+	
+	/**
+	 * 通过接口回调activity执行进度条显示控制
+	 */
+	private void loadding(){
+		showProgressbar();
+	}
+	
+	/**
+	 * 通过接口回调activity执行进度条显示控制
+	 */
+	private void finishLoadding(){
+		hideProgressbar();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if(recognizer != null){
+			recognizer.destroy();
+			recognizer = null;
+		}
+	}
 }

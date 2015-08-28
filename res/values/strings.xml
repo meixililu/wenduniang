@@ -2,12 +2,29 @@
 <resources>
 
     <string name="app_name">问度娘</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
-    <string name="action_settings">Settings</string>
-
+    <string name="title_about">关于我们</string>
+    <string name="action_more">更多</string>
+    <string name="input_et_hint">请输入搜索内容...</string>
+    <string name="search">百度一下</string>
+    <string name="copy_success">复制成功</string>
+    
+    <string name="app_id">55dc6919</string>
+    <string name="preference_default_iat_engine_en">sms-en</string>
+    <string name="preference_key_iat_rate">iat_rate</string>
+    <string name="preference_title_iat_rate">录音采样率</string>
+    <string name="preference_default_iat_rate">rate16k</string>
+    
+    <string name="preference_key_iat_engine">iat_engine</string>
+    <string name="preference_default_iat_engine">iat</string>
+    
+    <string name="preference_key_recognizer">recognizer</string>
+    <string name="preference_default_recognizer">zh_cn</string>
+    
+    <string name="preference_key_accent">accent</string>
+    <string name="preference_default_accent">mandarin</string>
+    
+    <string name="preference_key_tts_speed">tts_speed</string>
+    <string name="app_ad">有神马不知道的\n就问度娘！</string>
+    <string name="author">作者、设计：黎潞</string>
 </resources>
