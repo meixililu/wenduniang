@@ -77,7 +77,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_more) {
-			
+			toActivity(MoreActivity.class, null);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

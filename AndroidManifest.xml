@@ -49,6 +49,15 @@
         <activity
             android:name="com.lerdian.search.SearchResult"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".MoreActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AboutActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".WebViewActivity"
+            android:screenOrientation="portrait" />
         <meta-data
             android:name="LERDIAN_CHANNEL"
             android:value="02a82416e42d4c8c942255c7cf75aa8d" />

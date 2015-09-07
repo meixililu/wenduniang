@@ -27,4 +27,16 @@
     <string name="preference_key_tts_speed">tts_speed</string>
     <string name="app_ad">有神马不知道的\n就问度娘！</string>
     <string name="author">作者、设计：黎潞</string>
+    
+    <string name="leisuer_one">酷炫彩铃</string>
+	<string name="leisuer_one_subtitle">听听音乐放松一下</string>
+	<string name="leisuer_reading">阅读基地</string>
+	<string name="leisuer_reading_subtitle">看看小说放松一下</string>
+	<string name="leisuer_game">轻游戏中心</string>
+	<string name="leisuer_game_subtitle">大家都爱玩的小游戏</string>
+	
+	<string name="webview_reload">加载失败，轻触屏幕刷新!</string>
+	
+	<string name="title_cailing">酷炫彩铃</string>
+	<string name="title_reading">阅读基地</string>
 </resources>
