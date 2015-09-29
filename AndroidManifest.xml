@@ -60,7 +60,7 @@
             android:screenOrientation="portrait" />
         <meta-data
             android:name="LERDIAN_CHANNEL"
-            android:value="02a82416e42d4c8c942255c7cf75aa8d" />
+            android:value="7a8c73ff8c8e40308ac817977616173f" />
         
         <meta-data
             android:name="IFLYTEK_CHANNEL"
